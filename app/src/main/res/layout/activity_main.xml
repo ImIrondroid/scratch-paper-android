@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <com.iron.scratchpaper.ScratchPaperView
+        android:id="@+id/scratchPaperView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:text="Hello World!"
@@ -65,6 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="#EAEAEA"
             android:padding="16dp"
             android:src="@drawable/ic_pen" />
 
@@ -80,10 +82,10 @@
         <ImageView
             android:id="@+id/download_imageView"
             android:layout_width="0dp"
-            android:focusable="true"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:focusable="true"
             android:padding="16dp"
             android:src="@drawable/ic_download" />
 
