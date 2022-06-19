@@ -7,12 +7,86 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/event_linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/event_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/previous_imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_previous" />
+
+        <ImageView
+            android:id="@+id/next_imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_next" />
+
+        <ImageView
+            android:id="@+id/refresh_imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_refresh" />
+
+        <ImageView
+            android:id="@+id/background_imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_background" />
+
+        <ImageView
+            android:id="@+id/pen_imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_pen" />
+
+        <ImageView
+            android:id="@+id/eraser_imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_eraser" />
+
+        <ImageView
+            android:id="@+id/download_imageView"
+            android:layout_width="0dp"
+            android:focusable="true"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_download" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
