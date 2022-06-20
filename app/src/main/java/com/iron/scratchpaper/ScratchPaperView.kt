@@ -15,12 +15,17 @@ import kotlin.math.sqrt
  */
 class ScratchPaperView : View {
 
+    private var onPenChangeListener: (() -> Unit)? = null
     private var isSetUpEmbossFilter = false
     private var isSetUpBlurFilter = false
     var isEraserMode = false
 
+    private val penList: MutableList<Pen> = mutableListOf()
+    private var penIndex = 0
+    var isPreviousAvailable = false
+    var isNextAvailable = false
+
     private var curShape = PATH
-    private val penList: MutableList<Pen> = ArrayList()
     private var linePath = Path()
     private var eraserPath = Path()
     private val linePaint = Paint()
@@ -49,12 +54,21 @@ class ScratchPaperView : View {
         initializeEraserPaint()
     }
 
+    fun setOnPenChangeListener(onPenChangeListener: (() -> Unit)? = null) {
+        this.onPenChangeListener = onPenChangeListener
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        for (index in penList.indices) {
-            val pen = penList[index]
+        var penCount = 0
+        for (index in 0 until penList.size + penIndex) {
+            if(index >= penList.size) {
+                penIndex = 0
+                break
+            }
 
+            val pen = penList[index]
             if (pen.path != null) {
                 if (pen.eraseMode == Pen.MODE_ERASER) {
                     canvas.drawPath(pen.path, eraserPaint)
@@ -64,16 +78,40 @@ class ScratchPaperView : View {
             } else {
                 when (pen.type) {
                     LINE -> canvas.drawLine(pen.startX, pen.startY, pen.stopX, pen.stopY, linePaint)
+
                     SQUARE -> canvas.drawRect(pen.startX, pen.startY, pen.stopX, pen.stopY, linePaint)
+
                     CIRCLE -> {
                         val radius = sqrt(
                             (pen.stopX - pen.startX).toDouble().pow(2.0) + (pen.stopY - pen.startY).toDouble().pow(2.0)
                         ).toInt()
                         canvas.drawCircle(pen.startX, pen.startY, radius.toFloat(), linePaint)
                     }
+
                     PATH -> canvas.drawPath(linePath, linePaint)
                 }
             }
+
+            penCount++
+        }
+
+        when (penCount) {
+            0 -> {
+                isPreviousAvailable = false
+                isNextAvailable = true
+            }
+            penList.size -> {
+                isPreviousAvailable = true
+                isNextAvailable = false
+            }
+            else -> {
+                isPreviousAvailable = true
+                isNextAvailable = true
+            }
+        }
+
+        onPenChangeListener?.run {
+            if(penList.isNotEmpty()) invoke()
         }
 
         if (isEraserMode) {
@@ -81,13 +119,16 @@ class ScratchPaperView : View {
         } else {
             when (curShape) {
                 LINE -> canvas.drawLine(startX, startY, stopX, stopY, linePaint)
+
                 SQUARE -> canvas.drawRect(startX, startY, stopX, stopY, linePaint)
+
                 CIRCLE -> {
                     val radius = sqrt(
                         (stopX - startX).toDouble().pow(2.0) + (stopY - startY).toDouble().pow(2.0)
                     ).toInt()
                     canvas.drawCircle(startX, startY, radius.toFloat(), linePaint)
                 }
+
                 PATH -> canvas.drawPath(linePath, linePaint)
             }
         }
@@ -134,12 +175,31 @@ class ScratchPaperView : View {
 
     fun clear() {
         penList.clear()
+        penIndex = 0
+
         linePath.reset()
         eraserPath.reset()
         startX = -1F
         startY = -1F
         stopX = -1F
         stopY = -1F
+
+        isPreviousAvailable = false
+        isNextAvailable = false
+
+        onPenChangeListener?.run { invoke() }
+
+        invalidate()
+    }
+
+    fun setPreviousPenList() {
+        penIndex = if(penIndex > -penList.size) (penIndex - 1) else penIndex
+
+        invalidate()
+    }
+
+    fun setNextPenList() {
+        penIndex = if(penIndex < penList.size) (penIndex + 1) else penIndex
 
         invalidate()
     }
@@ -176,28 +236,34 @@ class ScratchPaperView : View {
                 stopX = event.x
                 stopY = event.y
 
+                var pen: Pen
                 when(curShape) {
                     PATH -> {
                         if (isEraserMode) {
                             eraserPath.lineTo(stopX, stopY)
-                            penList.add(
-                                Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_ERASER, eraserPath)
-                            )
+                            pen = Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_ERASER, eraserPath)
                             eraserPath = Path()
                         } else {
                             linePath.lineTo(stopX, stopY)
-                            penList.add(
-                                Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_NORMAL, linePath)
-                            )
+                            pen = Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_NORMAL, linePath)
                             linePath = Path()
                         }
                     }
 
-                    else -> {
-                        penList.add(
-                            Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_NORMAL, null)
-                        )
+                    else -> pen = Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_NORMAL, null)
+                }
+
+                if(penIndex == 0) {
+                    penList.add(pen)
+                } else {
+                    penList[penList.size + penIndex] = pen
+
+                    val penListSize = penList.size
+                    for(index in penList.size + penIndex + 1 until penListSize) {
+                        penList.removeAt(penListSize + penIndex + 1)
                     }
+
+                    penIndex = 0
                 }
 
                 invalidate()

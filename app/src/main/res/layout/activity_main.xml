@@ -30,8 +30,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
             android:padding="16dp"
-            android:src="@drawable/ic_previous" />
+            android:src="@drawable/ic_previous"
+            app:tint="#ff888888" />
 
         <ImageView
             android:id="@+id/next_imageView"
@@ -39,8 +41,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
             android:padding="16dp"
-            android:src="@drawable/ic_next" />
+            android:src="@drawable/ic_next"
+            app:tint="#ff888888" />
 
         <ImageView
             android:id="@+id/refresh_imageView"
@@ -48,6 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
             android:padding="16dp"
             android:src="@drawable/ic_refresh" />
 
@@ -57,6 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
             android:padding="16dp"
             android:src="@drawable/ic_background" />
 
@@ -85,6 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
             android:focusable="true"
             android:padding="16dp"
             android:src="@drawable/ic_download" />
