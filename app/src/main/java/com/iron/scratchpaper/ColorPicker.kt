@@ -128,7 +128,7 @@ class ColorPicker @JvmOverloads constructor(
                     }
                 } else {
                     val angle = atan2(y.toDouble(), x.toDouble()).toFloat()
-                    var unit = angle / (2 * PI)
+                    var unit = angle / (2 * PI) // 2 * PI = 360 degree
                     if (unit < 0) {
                         unit += 1f
                     }
@@ -147,7 +147,7 @@ class ColorPicker @JvmOverloads constructor(
                 }
             } else {
                 val angle = atan2(y.toDouble(), x.toDouble()).toFloat()
-                var unit = angle / (2 * PI)
+                var unit = angle / (2 * PI) // 2 * PI = 360 degree
                 if (unit < 0) {
                     unit += 1f
                 }

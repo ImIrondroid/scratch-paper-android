@@ -11,15 +11,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var scratchPaperView: ScratchPaperView
 
+    private var backgroundColor: Int = 0
+    private var penColor: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initialize()
+        initializeView()
     }
 
-    private fun initialize() {
+    private fun initializeView() {
         scratchPaperView = binding.scratchPaperView
         scratchPaperView.setOnPenChangeListener { setButtonState() }
 
@@ -36,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.backgroundImageView.setOnClickListener {
-
+            showBottomSheetFragment(true)
         }
 
         binding.penImageView.setOnClickListener {
@@ -46,11 +49,20 @@ class MainActivity : AppCompatActivity() {
             binding.eraserImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
         }
 
+        binding.penImageView.setOnLongClickListener {
+            showBottomSheetFragment(false)
+            true
+        }
+
         binding.eraserImageView.setOnClickListener {
             scratchPaperView.isEraserMode = true
 
             binding.eraserImageView.setBackgroundColor(Color.parseColor("#EAEAEA"))
             binding.penImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+        }
+
+        binding.eraserImageView.setOnLongClickListener {
+            true
         }
 
         binding.downloadImageView.setOnClickListener {
@@ -80,5 +92,15 @@ class MainActivity : AppCompatActivity() {
                 binding.nextImageView.imageTintList = ColorStateList.valueOf(Color.GRAY)
             }
         }
+    }
+
+    private fun showBottomSheetFragment(inBackground: Boolean) {
+        val dialog = ScratchBottomSheetDialogFragment().apply {
+            setOnConfirmListener { color ->
+                if(inBackground) backgroundColor = color
+                else penColor = color
+            }
+        }
+        dialog.show(supportFragmentManager, ScratchBottomSheetDialogFragment.TAG)
     }
 }
