@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingVertical="56dp">
+    android:paddingTop="40dp">
 
     <com.iron.scratchpaper.ColorPicker
         android:id="@+id/colorPicker"
@@ -12,5 +12,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/selectTextView"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="40dp"
+        android:background="#F6F6F6"
+        android:gravity="center"
+        android:text="색상 선택하기"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        app:layout_constraintTop_toBottomOf="@id/colorPicker" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -117,13 +117,12 @@ class ColorPicker @JvmOverloads constructor(
 
                 if (isCenter) {
                     mHighlightCenter = true
-
                     invalidate()
                 }
+
                 if (mTrackingCenter) {
                     if (mHighlightCenter != isCenter) {
                         mHighlightCenter = isCenter
-
                         invalidate()
                     }
                 } else {
@@ -134,7 +133,6 @@ class ColorPicker @JvmOverloads constructor(
                     }
 
                     centerPaint.color = interpColor(mColors, unit)
-
                     invalidate()
                 }
             }
@@ -142,7 +140,6 @@ class ColorPicker @JvmOverloads constructor(
             MotionEvent.ACTION_MOVE -> if (mTrackingCenter) {
                 if (mHighlightCenter != isCenter) {
                     mHighlightCenter = isCenter
-
                     invalidate()
                 }
             } else {
@@ -153,18 +150,14 @@ class ColorPicker @JvmOverloads constructor(
                 }
 
                 centerPaint.color = interpColor(mColors, unit)
-
                 invalidate()
             }
 
             MotionEvent.ACTION_UP -> {
+                onColorChangeListener?.invoke(centerPaint.color)
+
                 if (mTrackingCenter) {
-                    if (isCenter) {
-                        onColorChangeListener?.invoke(centerPaint.color)
-                    }
-
                     mTrackingCenter = false
-
                     invalidate()
                 }
             }

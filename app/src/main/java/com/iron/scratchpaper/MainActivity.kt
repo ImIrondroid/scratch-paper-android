@@ -4,15 +4,13 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.iron.scratchpaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var scratchPaperView: ScratchPaperView
-
-    private var backgroundColor: Int = 0
-    private var penColor: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.backgroundImageView.setOnClickListener {
-            showBottomSheetFragment(true)
+            showScratchBottomSheetFragment(true)
         }
 
         binding.penImageView.setOnClickListener {
@@ -50,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.penImageView.setOnLongClickListener {
-            showBottomSheetFragment(false)
+            showScratchBottomSheetFragment(false)
             true
         }
 
@@ -94,13 +92,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showBottomSheetFragment(inBackground: Boolean) {
+    private fun showScratchBottomSheetFragment(isBackgroundMode: Boolean) {
         val dialog = ScratchBottomSheetDialogFragment().apply {
             setOnConfirmListener { color ->
-                if(inBackground) backgroundColor = color
-                else penColor = color
+                if(isBackgroundMode) {
+                    scratchPaperView.setScratchPaperBackgroundColor(color)
+                } else {
+                    scratchPaperView.setPenColor(color)
+                }
             }
         }
+
         dialog.show(supportFragmentManager, ScratchBottomSheetDialogFragment.TAG)
     }
 }

@@ -16,6 +16,7 @@ import kotlin.math.sqrt
 class ScratchPaperView : View {
 
     private var onPenChangeListener: (() -> Unit)? = null
+
     private var isSetUpEmbossFilter = false
     private var isSetUpBlurFilter = false
     var isEraserMode = false
@@ -25,6 +26,7 @@ class ScratchPaperView : View {
     var isPreviousAvailable = false
     var isNextAvailable = false
 
+    private var scratchPaperColor = Color.WHITE
     private var curShape = PATH
     private var linePath = Path()
     private var eraserPath = Path()
@@ -60,6 +62,8 @@ class ScratchPaperView : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        canvas.drawColor(scratchPaperColor)
 
         var penCount = 0
         for (index in 0 until penList.size + penIndex) {
@@ -146,6 +150,16 @@ class ScratchPaperView : View {
         eraserPaint.strokeWidth = 30f
         eraserPaint.style = Paint.Style.STROKE
         eraserPaint.color = Color.WHITE
+    }
+
+    fun setScratchPaperBackgroundColor(color: Int) {
+        scratchPaperColor = color
+        invalidate()
+    }
+
+    fun setPenColor(color: Int) {
+        linePaint.color = color
+        invalidate()
     }
 
     fun setEmbossFilter() {

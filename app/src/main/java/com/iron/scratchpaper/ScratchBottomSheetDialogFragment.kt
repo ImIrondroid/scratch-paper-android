@@ -53,6 +53,10 @@ class ScratchBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun initializeView() {
         binding.colorPicker.setOnColorChangeListener {
             color = it
+        }
+
+        binding.selectTextView.setOnClickListener {
+            onConfirmListener.invoke(color)
             dismiss()
         }
     }
