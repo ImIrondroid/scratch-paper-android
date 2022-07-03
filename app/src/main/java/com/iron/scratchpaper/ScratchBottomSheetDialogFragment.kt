@@ -17,7 +17,7 @@ import com.iron.scratchpaper.databinding.DialogBottomSheetScratchBinding
  */
 class ScratchBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
-    private lateinit var onConfirmListener: (Int) -> Unit
+    private lateinit var onSelectListener: (Int) -> Unit
     private lateinit var binding: DialogBottomSheetScratchBinding
 
     private var color = 0
@@ -56,13 +56,13 @@ class ScratchBottomSheetDialogFragment : BottomSheetDialogFragment() {
         }
 
         binding.selectTextView.setOnClickListener {
-            onConfirmListener.invoke(color)
+            onSelectListener.invoke(color)
             dismiss()
         }
     }
 
-    fun setOnConfirmListener(onConfirmListener: (Int) -> Unit) {
-        this.onConfirmListener = onConfirmListener
+    fun setOnSelectListener(onSelectListener: (Int) -> Unit) {
+        this.onSelectListener = onSelectListener
     }
 
     companion object {

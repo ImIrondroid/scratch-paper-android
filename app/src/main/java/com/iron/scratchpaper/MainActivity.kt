@@ -2,10 +2,13 @@ package com.iron.scratchpaper
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import com.iron.scratchpaper.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -94,8 +97,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun showScratchBottomSheetFragment(isBackgroundMode: Boolean) {
         val dialog = ScratchBottomSheetDialogFragment().apply {
-            setOnConfirmListener { color ->
+            setOnSelectListener { color ->
                 if(isBackgroundMode) {
+                    setStatusBarColor(color)
                     scratchPaperView.setScratchPaperBackgroundColor(color)
                 } else {
                     scratchPaperView.setPenColor(color)
@@ -104,5 +108,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show(supportFragmentManager, ScratchBottomSheetDialogFragment.TAG)
+    }
+
+    private fun setStatusBarColor(color: Int) {
+        window.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            statusBarColor = color
+        }
     }
 }
