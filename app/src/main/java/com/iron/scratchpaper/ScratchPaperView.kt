@@ -1,10 +1,18 @@
 package com.iron.scratchpaper
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.*
+import android.net.Uri
+import android.os.Environment
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.view.drawToBitmap
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -152,6 +160,30 @@ class ScratchPaperView : View {
         eraserPaint.color = Color.WHITE
     }
 
+    fun convertBitmapToFile() {
+        val rootPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
+        val dirName = "/ScratchPaper"
+        val fileName = System.currentTimeMillis().toString() + ".png"
+        val folderPath = File(rootPath + dirName)
+        folderPath.mkdirs()
+
+        var outputStream: FileOutputStream? = null
+        try {
+            val file = File(folderPath, fileName)
+            outputStream = FileOutputStream(file)
+
+            val bitmap = drawToBitmap()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+        } finally {
+            outputStream?.run {
+                flush()
+                close()
+            }
+        }
+    }
+
     fun setScratchPaperBackgroundColor(color: Int) {
         scratchPaperColor = color
         invalidate()
@@ -185,6 +217,8 @@ class ScratchPaperView : View {
         isSetUpBlurFilter = !isSetUpBlurFilter
 
         invalidate()
+
+        drawToBitmap()
     }
 
     fun clear() {

@@ -2,9 +2,10 @@ package com.iron.scratchpaper
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.os.Build
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
-import android.view.View
+import android.os.Environment
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.iron.scratchpaper.databinding.ActivityMainBinding
@@ -15,12 +16,48 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var scratchPaperView: ScratchPaperView
 
+    private lateinit var mediaScannerConnection: MediaScannerConnection
+    private lateinit var mediaScannerConnectionClient: MediaScannerConnection.MediaScannerConnectionClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        connectMediaScanner()
         initializeView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        mediaScannerConnection.disconnect()
+    }
+
+    //https://ddolcat.tistory.com/824
+    private fun connectMediaScanner() {
+        mediaScannerConnectionClient = object: MediaScannerConnection.MediaScannerConnectionClient {
+            override fun onScanCompleted(p0: String?, p1: Uri?) {
+                scanFile()
+            }
+
+            override fun onMediaScannerConnected() {
+                scanFile()
+            }
+        }
+
+        mediaScannerConnection = MediaScannerConnection(this, mediaScannerConnectionClient)
+        mediaScannerConnection.connect()
+    }
+
+    private fun scanFile() {
+        val filePath = Uri.parse("file://" + Environment.getExternalStorageDirectory()).path
+
+        filePath?.run {
+            val rootPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
+            val dirName = "/ScratchPaper"
+            mediaScannerConnection.scanFile(rootPath + dirName, null)
+        }
     }
 
     private fun initializeView() {
@@ -67,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.downloadImageView.setOnClickListener {
-
+            scratchPaperView.convertBitmapToFile()
         }
     }
 
