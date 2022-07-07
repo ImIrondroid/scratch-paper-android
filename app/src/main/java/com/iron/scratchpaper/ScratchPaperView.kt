@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.drawToBitmap
 import java.io.File
 import java.io.FileOutputStream
@@ -35,11 +36,10 @@ class ScratchPaperView : View {
     var isNextAvailable = false
 
     private var scratchPaperColor = Color.WHITE
+    private var lineColor = Color.RED
     private var curShape = PATH
     private var linePath = Path()
-    private var eraserPath = Path()
     private val linePaint = Paint()
-    private val eraserPaint = Paint()
     private var startX = -1F
     private var startY = -1F
     private var stopX = -1F
@@ -47,12 +47,10 @@ class ScratchPaperView : View {
 
     constructor(context: Context?) : super(context) {
         initializeLinePaint()
-        initializeEraserPaint()
     }
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         initializeLinePaint()
-        initializeEraserPaint()
     }
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -61,7 +59,6 @@ class ScratchPaperView : View {
         defStyleAttr
     ) {
         initializeLinePaint()
-        initializeEraserPaint()
     }
 
     fun setOnPenChangeListener(onPenChangeListener: (() -> Unit)? = null) {
@@ -82,11 +79,9 @@ class ScratchPaperView : View {
 
             val pen = penList[index]
             if (pen.path != null) {
-                if (pen.eraseMode == Pen.MODE_ERASER) {
-                    canvas.drawPath(pen.path, eraserPaint)
-                } else {
-                    canvas.drawPath(pen.path, linePaint)
-                }
+                linePaint.color = pen.color
+                linePaint.strokeWidth = pen.stroke
+                canvas.drawPath(pen.path, linePaint)
             } else {
                 when (pen.type) {
                     LINE -> canvas.drawLine(pen.startX, pen.startY, pen.stopX, pen.stopY, linePaint)
@@ -94,13 +89,14 @@ class ScratchPaperView : View {
                     SQUARE -> canvas.drawRect(pen.startX, pen.startY, pen.stopX, pen.stopY, linePaint)
 
                     CIRCLE -> {
-                        val radius = sqrt(
-                            (pen.stopX - pen.startX).toDouble().pow(2.0) + (pen.stopY - pen.startY).toDouble().pow(2.0)
-                        ).toInt()
+                        val radius = sqrt((pen.stopX - pen.startX).toDouble().pow(2.0) + (pen.stopY - pen.startY).toDouble().pow(2.0)).toInt()
                         canvas.drawCircle(pen.startX, pen.startY, radius.toFloat(), linePaint)
                     }
 
-                    PATH -> canvas.drawPath(linePath, linePaint)
+                    PATH -> {
+                        linePaint.color = pen.color
+                        canvas.drawPath(linePath, linePaint)
+                    }
                 }
             }
 
@@ -127,7 +123,9 @@ class ScratchPaperView : View {
         }
 
         if (isEraserMode) {
-            canvas.drawPath(eraserPath, eraserPaint)
+            linePaint.strokeWidth = 30f
+            linePaint.color = Color.WHITE
+            canvas.drawPath(linePath, linePaint)
         } else {
             when (curShape) {
                 LINE -> canvas.drawLine(startX, startY, stopX, stopY, linePaint)
@@ -135,13 +133,15 @@ class ScratchPaperView : View {
                 SQUARE -> canvas.drawRect(startX, startY, stopX, stopY, linePaint)
 
                 CIRCLE -> {
-                    val radius = sqrt(
-                        (stopX - startX).toDouble().pow(2.0) + (stopY - startY).toDouble().pow(2.0)
-                    ).toInt()
+                    val radius = sqrt((stopX - startX).toDouble().pow(2.0) + (stopY - startY).toDouble().pow(2.0)).toInt()
                     canvas.drawCircle(startX, startY, radius.toFloat(), linePaint)
                 }
 
-                PATH -> canvas.drawPath(linePath, linePaint)
+                PATH -> {
+                    linePaint.color = lineColor
+                    linePaint.strokeWidth = 5f
+                    canvas.drawPath(linePath, linePaint)
+                }
             }
         }
     }
@@ -151,13 +151,6 @@ class ScratchPaperView : View {
         linePaint.strokeWidth = 5f
         linePaint.style = Paint.Style.STROKE
         linePaint.color = Color.RED
-    }
-
-    private fun initializeEraserPaint() {
-        eraserPaint.isAntiAlias = true
-        eraserPaint.strokeWidth = 30f
-        eraserPaint.style = Paint.Style.STROKE
-        eraserPaint.color = Color.WHITE
     }
 
     fun convertBitmapToFile() {
@@ -174,8 +167,12 @@ class ScratchPaperView : View {
 
             val bitmap = drawToBitmap()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+
+            Toast.makeText(context, "이미지가 저장되었습니다", Toast.LENGTH_SHORT).show()
         } catch (exception: Exception) {
             exception.printStackTrace()
+
+            Toast.makeText(context, "이미지가 저장에 실패하였습니다", Toast.LENGTH_SHORT).show()
         } finally {
             outputStream?.run {
                 flush()
@@ -190,8 +187,7 @@ class ScratchPaperView : View {
     }
 
     fun setPenColor(color: Int) {
-        linePaint.color = color
-        invalidate()
+        lineColor = color
     }
 
     fun setEmbossFilter() {
@@ -226,7 +222,7 @@ class ScratchPaperView : View {
         penIndex = 0
 
         linePath.reset()
-        eraserPath.reset()
+        //eraserPath.reset()
         startX = -1F
         startY = -1F
         stopX = -1F
@@ -263,8 +259,7 @@ class ScratchPaperView : View {
                 startY = event.y
 
                 if(curShape == PATH) {
-                    if (isEraserMode) eraserPath.moveTo(startX, startY)
-                    else linePath.moveTo(startX, startY)
+                    linePath.moveTo(startX, startY)
                 }
             }
 
@@ -273,8 +268,7 @@ class ScratchPaperView : View {
                 stopY = event.y
 
                 if(curShape == PATH) {
-                    if (isEraserMode) eraserPath.lineTo(stopX, stopY)
-                    else linePath.lineTo(stopX, stopY)
+                    linePath.lineTo(stopX, stopY)
                 }
 
                 invalidate()
@@ -287,18 +281,14 @@ class ScratchPaperView : View {
                 var pen: Pen
                 when(curShape) {
                     PATH -> {
-                        if (isEraserMode) {
-                            eraserPath.lineTo(stopX, stopY)
-                            pen = Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_ERASER, eraserPath)
-                            eraserPath = Path()
-                        } else {
-                            linePath.lineTo(stopX, stopY)
-                            pen = Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_NORMAL, linePath)
-                            linePath = Path()
-                        }
+                        linePath.lineTo(stopX, stopY)
+                        pen =
+                            if (isEraserMode) Pen(startX, startY, stopX, stopY, curShape, linePath, Color.WHITE, 30f)
+                            else Pen(startX, startY, stopX, stopY, curShape, linePath, lineColor, 5f)
+                        linePath = Path()
                     }
 
-                    else -> pen = Pen(startX, startY, stopX, stopY, curShape, Pen.MODE_NORMAL, null)
+                    else -> pen = Pen(startX, startY, stopX, stopY, curShape,null, lineColor, 5f)
                 }
 
                 if(penIndex == 0) {

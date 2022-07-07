@@ -13,8 +13,9 @@ data class Pen(
     val stopX: Float,
     val stopY: Float,
     val type: Int,
-    val eraseMode: Int,
-    val path: Path?
+    val path: Path?,
+    val color: Int,
+    val stroke: Float
 ) {
     companion object {
         const val MODE_NORMAL = 0
