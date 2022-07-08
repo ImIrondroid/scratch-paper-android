@@ -1,99 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <com.iron.scratchpaper.ScratchPaperView
-        android:id="@+id/scratchPaperView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/event_linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/adView"
+        tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/event_linearLayout"
+        <com.iron.scratchpaper.ScratchPaperView
+            android:id="@+id/scratchPaperView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/event_linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/event_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/previous_imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:src="@drawable/ic_previous"
+                app:tint="#ff888888" />
+
+            <ImageView
+                android:id="@+id/next_imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:src="@drawable/ic_next"
+                app:tint="#ff888888" />
+
+            <ImageView
+                android:id="@+id/refresh_imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:src="@drawable/ic_refresh" />
+
+            <ImageView
+                android:id="@+id/background_imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:src="@drawable/ic_background" />
+
+            <ImageView
+                android:id="@+id/pen_imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#EAEAEA"
+                android:padding="16dp"
+                android:src="@drawable/ic_pen" />
+
+            <ImageView
+                android:id="@+id/eraser_imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:padding="16dp"
+                android:src="@drawable/ic_eraser" />
+
+            <ImageView
+                android:id="@+id/download_imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:padding="16dp"
+                android:src="@drawable/ic_download" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:id="@+id/previous_imageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="?attr/selectableItemBackground"
-            android:padding="16dp"
-            android:src="@drawable/ic_previous"
-            app:tint="#ff888888" />
-
-        <ImageView
-            android:id="@+id/next_imageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="?attr/selectableItemBackground"
-            android:padding="16dp"
-            android:src="@drawable/ic_next"
-            app:tint="#ff888888" />
-
-        <ImageView
-            android:id="@+id/refresh_imageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="?attr/selectableItemBackground"
-            android:padding="16dp"
-            android:src="@drawable/ic_refresh" />
-
-        <ImageView
-            android:id="@+id/background_imageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="?attr/selectableItemBackground"
-            android:padding="16dp"
-            android:src="@drawable/ic_background" />
-
-        <ImageView
-            android:id="@+id/pen_imageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="#EAEAEA"
-            android:padding="16dp"
-            android:src="@drawable/ic_pen" />
-
-        <ImageView
-            android:id="@+id/eraser_imageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:padding="16dp"
-            android:src="@drawable/ic_eraser" />
-
-        <ImageView
-            android:id="@+id/download_imageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="?attr/selectableItemBackground"
-            android:focusable="true"
-            android:padding="16dp"
-            android:src="@drawable/ic_download" />
-
-    </LinearLayout>
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544~3347511713"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

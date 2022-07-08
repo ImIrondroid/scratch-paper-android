@@ -6,8 +6,13 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.iron.scratchpaper.databinding.ActivityMainBinding
 
 
@@ -24,40 +29,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        connectMediaScanner()
         initializeView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        mediaScannerConnection.disconnect()
-    }
-
-    //https://ddolcat.tistory.com/824
-    private fun connectMediaScanner() {
-        mediaScannerConnectionClient = object: MediaScannerConnection.MediaScannerConnectionClient {
-            override fun onScanCompleted(p0: String?, p1: Uri?) {
-                scanFile()
-            }
-
-            override fun onMediaScannerConnected() {
-                scanFile()
-            }
-        }
-
-        mediaScannerConnection = MediaScannerConnection(this, mediaScannerConnectionClient)
-        mediaScannerConnection.connect()
-    }
-
-    private fun scanFile() {
-        val filePath = Uri.parse("file://" + Environment.getExternalStorageDirectory()).path
-
-        filePath?.run {
-            val rootPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
-            val dirName = "/ScratchPaper"
-            mediaScannerConnection.scanFile(rootPath + dirName, null)
-        }
+        initializeAdMob()
     }
 
     private fun initializeView() {
@@ -104,7 +77,50 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.downloadImageView.setOnClickListener {
-            scratchPaperView.convertBitmapToFile()
+            scratchPaperView.saveBitmapToFile()
+            connectMediaScanner()
+        }
+    }
+
+    private fun initializeAdMob() {
+        MobileAds.initialize(this) { Unit }
+
+        val adRequest = AdRequest
+            .Builder()
+            .build()
+
+        binding.adView.apply {
+            adListener = object: AdListener() {
+                override fun onAdClicked() {
+                    binding.adView.visibility = View.GONE
+                }
+            }
+            loadAd(adRequest)
+        }
+    }
+
+    private fun connectMediaScanner() {
+        mediaScannerConnectionClient = object: MediaScannerConnection.MediaScannerConnectionClient {
+            override fun onScanCompleted(p0: String?, p1: Uri?) {
+                mediaScannerConnection.disconnect()
+            }
+
+            override fun onMediaScannerConnected() {
+                scanFile()
+            }
+        }
+
+        mediaScannerConnection = MediaScannerConnection(this, mediaScannerConnectionClient)
+        mediaScannerConnection.connect()
+    }
+
+    private fun scanFile() {
+        val filePath = Uri.parse("file://" + Environment.getExternalStorageDirectory()).path
+
+        filePath?.run {
+            val rootPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
+            val dirName = "/ScratchPaper"
+            mediaScannerConnection.scanFile(rootPath + dirName, null)
         }
     }
 
