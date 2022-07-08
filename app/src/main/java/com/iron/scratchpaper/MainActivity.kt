@@ -6,9 +6,9 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -17,6 +17,8 @@ import com.iron.scratchpaper.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
+
+    private val penViewModel: PenViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var scratchPaperView: ScratchPaperView
@@ -33,9 +35,34 @@ class MainActivity : AppCompatActivity() {
         initializeAdMob()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+
+        scratchPaperView.apply {
+            setOnPenChangeListener { setMoveMode() }
+            savePenState(penViewModel.penState)
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        scratchPaperView.apply {
+            setOnPenChangeListener { setMoveMode() }
+            savePenState(penViewModel.penState)
+            setPenMode()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        penViewModel.penState = scratchPaperView.getCurrentPenState()
+    }
+
     private fun initializeView() {
         scratchPaperView = binding.scratchPaperView
-        scratchPaperView.setOnPenChangeListener { setButtonState() }
+        scratchPaperView.setOnPenChangeListener { setMoveMode() }
 
         binding.previousImageView.setOnClickListener {
             scratchPaperView.setPreviousPenList()
@@ -56,8 +83,7 @@ class MainActivity : AppCompatActivity() {
         binding.penImageView.setOnClickListener {
             scratchPaperView.isEraserMode = false
 
-            binding.penImageView.setBackgroundColor(Color.parseColor("#EAEAEA"))
-            binding.eraserImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            setPenMode()
         }
 
         binding.penImageView.setOnLongClickListener {
@@ -68,8 +94,7 @@ class MainActivity : AppCompatActivity() {
         binding.eraserImageView.setOnClickListener {
             scratchPaperView.isEraserMode = true
 
-            binding.eraserImageView.setBackgroundColor(Color.parseColor("#EAEAEA"))
-            binding.penImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            setPenMode()
         }
 
         binding.eraserImageView.setOnLongClickListener {
@@ -124,7 +149,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setButtonState() {
+    private fun setPenMode() {
+        if(scratchPaperView.isEraserMode) {
+            binding.eraserImageView.setBackgroundColor(Color.parseColor("#EAEAEA"))
+            binding.penImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+        } else {
+            binding.eraserImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            binding.penImageView.setBackgroundColor(Color.parseColor("#EAEAEA"))
+        }
+    }
+
+    private fun setMoveMode() {
         when(scratchPaperView.isPreviousAvailable) {
             true -> {
                 binding.previousImageView.isClickable = true
@@ -148,6 +183,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setStatusBarColor(color: Int) {
+        window.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            statusBarColor = color
+        }
+    }
+
     private fun showScratchBottomSheetFragment(isBackgroundMode: Boolean) {
         val dialog = ScratchBottomSheetDialogFragment().apply {
             setOnSelectListener { color ->
@@ -161,13 +204,5 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show(supportFragmentManager, ScratchBottomSheetDialogFragment.TAG)
-    }
-
-    private fun setStatusBarColor(color: Int) {
-        window.apply {
-            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            statusBarColor = color
-        }
     }
 }

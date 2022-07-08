@@ -43,7 +43,7 @@ class ColorPicker @JvmOverloads constructor(
         borderPaint.strokeWidth = 70f
 
         centerPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        centerPaint.color = Color.BLACK
+        centerPaint.color = Color.RED
         centerPaint.strokeWidth = 5f
     }
 
