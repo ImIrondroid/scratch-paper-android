@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeView() {
         scratchPaperView = binding.scratchPaperView
+
         scratchPaperView.setOnPenChangeListener { setMoveMode() }
 
         binding.previousImageView.setOnClickListener {
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.backgroundImageView.setOnClickListener {
-            showScratchBottomSheetFragment(true)
+            showScratchBottomSheetFragment(Mode.Background)
         }
 
         binding.penImageView.setOnClickListener {
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.penImageView.setOnLongClickListener {
-            showScratchBottomSheetFragment(false)
+            showScratchBottomSheetFragment(Mode.Pen)
             true
         }
 
@@ -98,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.eraserImageView.setOnLongClickListener {
+            showScratchBottomSheetFragment(Mode.Eraser)
             true
         }
 
@@ -191,14 +193,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showScratchBottomSheetFragment(isBackgroundMode: Boolean) {
-        val dialog = ScratchBottomSheetDialogFragment().apply {
-            setOnSelectListener { color ->
-                if(isBackgroundMode) {
-                    setStatusBarColor(color)
-                    scratchPaperView.setScratchPaperBackgroundColor(color)
-                } else {
-                    scratchPaperView.setPenColor(color)
+    private fun showScratchBottomSheetFragment(mode: Mode) {
+        val penState = scratchPaperView.getCurrentPenState()
+        val dialog = ScratchBottomSheetDialogFragment(penState, mode).apply {
+            setOnSelectListener { color, thickness ->
+                when(mode) {
+                    is Mode.Background -> {
+                        setStatusBarColor(color)
+                        scratchPaperView.setScratchPaperBackgroundColor(color)
+                    }
+                    is Mode.Pen, is Mode.Eraser-> {
+                        scratchPaperView.setPenColor(color)
+                        scratchPaperView.setPenThickness(mode, thickness)
+                    }
                 }
             }
         }

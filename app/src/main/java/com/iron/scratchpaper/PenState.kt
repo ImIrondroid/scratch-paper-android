@@ -9,9 +9,11 @@ package com.iron.scratchpaper
 data class PenState(
     val penList: List<Pen>,
     val penIndex: Int,
+    val penColor: Int,
+    val penThickness: Float,
+    val eraserThickness: Float,
     val isEraserMode: Boolean,
     val isPreviousAvailable: Boolean,
     val isNextAvailable: Boolean,
-    val scratchPaperColor: Int,
-    val penColor: Int
+    val scratchPaperColor: Int
 )

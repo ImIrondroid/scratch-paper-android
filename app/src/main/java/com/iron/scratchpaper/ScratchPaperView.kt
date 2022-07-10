@@ -36,6 +36,8 @@ class ScratchPaperView : View {
     private var penPath = Path()
     private val penPaint = Paint()
     private var penColor = Color.RED
+    private var penThickness = 10f
+    private var eraserThickness = 50f
     private var startX = -1F
     private var startY = -1F
     private var stopX = -1F
@@ -115,7 +117,7 @@ class ScratchPaperView : View {
         }
 
         if (isEraserMode) {
-            penPaint.strokeWidth = 50f
+            penPaint.strokeWidth = eraserThickness
             penPaint.color = Color.WHITE
             canvas.drawPath(penPath, penPaint)
         } else {
@@ -131,7 +133,7 @@ class ScratchPaperView : View {
 
                 PATH -> {
                     penPaint.color = penColor
-                    penPaint.strokeWidth = 5f
+                    penPaint.strokeWidth = penThickness
                     canvas.drawPath(penPath, penPaint)
                 }
             }
@@ -140,7 +142,8 @@ class ScratchPaperView : View {
 
     private fun initializePenPaint() {
         penPaint.isAntiAlias = true
-        penPaint.strokeWidth = 5f
+        penPaint.strokeWidth = penThickness
+        penPaint.strokeCap = Paint.Cap.ROUND
         penPaint.style = Paint.Style.STROKE
         penPaint.color = Color.RED
     }
@@ -151,17 +154,27 @@ class ScratchPaperView : View {
 
     fun getCurrentPenState() =
         PenState(
-            penList, penIndex, isEraserMode, isPreviousAvailable, isNextAvailable, scratchPaperColor, penColor
+            penList,
+            penIndex,
+            penColor,
+            penThickness,
+            eraserThickness,
+            isEraserMode,
+            isPreviousAvailable,
+            isNextAvailable,
+            scratchPaperColor,
         )
 
     fun savePenState(penState: PenState) {
         penList.addAll(penState.penList)
         penIndex = penState.penIndex
+        penColor = penState.penColor
+        penThickness = penState.penThickness
+        eraserThickness = penState.eraserThickness
         isEraserMode = penState.isEraserMode
         isPreviousAvailable = penState.isPreviousAvailable
         isNextAvailable = penState.isNextAvailable
         scratchPaperColor = penState.scratchPaperColor
-        penColor = penState.penColor
 
         invalidate()
     }
@@ -202,6 +215,16 @@ class ScratchPaperView : View {
 
     fun setPenColor(color: Int) {
         penColor = color
+    }
+
+    fun setPenThickness(
+        mode: Mode,
+        thickness: Float
+    ) {
+        when(mode) {
+            Mode.Pen -> penThickness = thickness
+            Mode.Eraser -> eraserThickness = thickness
+        }
     }
 
     fun setEmbossFilter() {
@@ -296,12 +319,12 @@ class ScratchPaperView : View {
                     PATH -> {
                         penPath.lineTo(stopX, stopY)
                         pen =
-                            if (isEraserMode) Pen(startX, startY, stopX, stopY, curShape, penPath, Color.WHITE, 50f)
-                            else Pen(startX, startY, stopX, stopY, curShape, penPath, penColor, 5f)
+                            if (isEraserMode) Pen(startX, startY, stopX, stopY, curShape, penPath, Color.WHITE, eraserThickness)
+                            else Pen(startX, startY, stopX, stopY, curShape, penPath, penColor, penThickness)
                         penPath = Path()
                     }
 
-                    else -> pen = Pen(startX, startY, stopX, stopY, curShape,null, penColor, 5f)
+                    else -> pen = Pen(startX, startY, stopX, stopY, curShape,null, penColor, penThickness)
                 }
 
                 if(penIndex == 0) {
