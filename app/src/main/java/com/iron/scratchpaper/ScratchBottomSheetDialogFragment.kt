@@ -19,18 +19,16 @@ import com.iron.scratchpaper.databinding.DialogBottomSheetScratchBinding
  * @created 2022-06-23
  * @desc
  */
-class ScratchBottomSheetDialogFragment(
-    private val mode: Mode
-) : BottomSheetDialogFragment() {
+class ScratchBottomSheetDialogFragment: BottomSheetDialogFragment() {
 
     private val scratchPaperViewModel: ScratchPaperViewModel by activityViewModels()
 
     private lateinit var binding: DialogBottomSheetScratchBinding
 
-    private lateinit var onSelectListener: (Int, Float) -> Unit
+    private lateinit var setOnConfirmListener: (Int, Float) -> Unit
     private var color = 0
     private var thickness = 0f
-
+    private lateinit var mode: Mode
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +50,7 @@ class ScratchBottomSheetDialogFragment(
                 behavior.isDraggable = false
             }
         }
+
         return bottomSheetDialog
     }
 
@@ -61,11 +60,28 @@ class ScratchBottomSheetDialogFragment(
         initializeView()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putInt(KEY_COLOR, color)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+        savedInstanceState?.run {
+            color = get(KEY_COLOR) as Int
+            binding.colorPicker.setCenterPaint(color)
+        }
+    }
+
     private fun initializeView() {
+        mode = scratchPaperViewModel.mode
+
         when (mode) {
             is Mode.Background -> {
                 binding.colorTitleTextView.text = getString(R.string.scratchPaperColor)
-                binding.thicknessSelectTextView.visibility = View.GONE
+                binding.thicknessConfirmTextView.visibility = View.GONE
             }
             is Mode.Eraser -> {
                 binding.thicknessTitleTextView.text = getString(R.string.eraserThickness)
@@ -74,7 +90,7 @@ class ScratchBottomSheetDialogFragment(
             else -> {
                 binding.colorTitleTextView.text = getString(R.string.penColor)
                 binding.thicknessTitleTextView.text = getString(R.string.penThickness)
-                binding.thicknessSelectTextView.visibility = View.GONE
+                binding.thicknessConfirmTextView.visibility = View.GONE
             }
         }
 
@@ -100,21 +116,30 @@ class ScratchBottomSheetDialogFragment(
             setCenterPaint(color)
         }
 
-        binding.colorSelectTextView.setOnClickListener {
+        binding.colorConfirmTextView.setOnClickListener {
             when (mode) {
-                is Mode.Background -> onSelectListener.invoke(color, 0f)
-                is Mode.Pen -> onSelectListener.invoke(color, thickness)
-                is Mode.Eraser -> onSelectListener.invoke(0, thickness)
+                is Mode.Background -> {
+                    (requireActivity() as MainActivity).setStatusBarColor(color)
+                    (requireActivity() as MainActivity).scratchPaperView.setScratchPaperBackgroundColor(color)
+                }
+                is Mode.Pen -> {
+                    (requireActivity() as MainActivity).scratchPaperView.setPenColor(color)
+                    (requireActivity() as MainActivity).scratchPaperView.setPenThickness(mode, thickness)
+                }
             }
 
             dismiss()
         }
 
-        binding.thicknessSelectTextView.setOnClickListener {
+        binding.thicknessConfirmTextView.setOnClickListener {
             when (mode) {
-                is Mode.Background -> onSelectListener.invoke(color, 0f)
-                is Mode.Pen -> onSelectListener.invoke(color, thickness)
-                is Mode.Eraser -> onSelectListener.invoke(0, thickness)
+                is Mode.Pen -> {
+                    (requireActivity() as MainActivity).scratchPaperView.setPenColor(color)
+                    (requireActivity() as MainActivity).scratchPaperView.setPenThickness(mode, thickness)
+                }
+                is Mode.Eraser -> {
+                    (requireActivity() as MainActivity).scratchPaperView.setPenThickness(mode, thickness)
+                }
             }
 
             dismiss()
@@ -153,11 +178,8 @@ class ScratchBottomSheetDialogFragment(
         }
     }
 
-    fun setOnSelectListener(onSelectListener: (Int, Float) -> Unit) {
-        this.onSelectListener = onSelectListener
-    }
-
     companion object {
         const val TAG = "ScratchBottomSheetDialogFragment"
+        const val KEY_COLOR = "KEY_COLOR"
     }
 }

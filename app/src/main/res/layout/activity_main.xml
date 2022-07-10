@@ -36,9 +36,9 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
-                android:padding="16dp"
+                android:padding="@dimen/normal_100"
                 android:src="@drawable/ic_previous"
-                app:tint="#ff888888" />
+                app:tint="@color/lightGray" />
 
             <ImageView
                 android:id="@+id/next_imageView"
@@ -47,9 +47,9 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
-                android:padding="16dp"
+                android:padding="@dimen/normal_100"
                 android:src="@drawable/ic_next"
-                app:tint="#ff888888" />
+                app:tint="@color/lightGray" />
 
             <ImageView
                 android:id="@+id/refresh_imageView"
@@ -58,7 +58,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
-                android:padding="16dp"
+                android:padding="@dimen/normal_100"
                 android:src="@drawable/ic_refresh" />
 
             <ImageView
@@ -68,7 +68,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
-                android:padding="16dp"
+                android:padding="@dimen/normal_100"
                 android:src="@drawable/ic_background" />
 
             <ImageView
@@ -78,7 +78,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="#EAEAEA"
-                android:padding="16dp"
+                android:padding="@dimen/normal_100"
                 android:src="@drawable/ic_pen" />
 
             <ImageView
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
-                android:padding="16dp"
+                android:padding="@dimen/normal_100"
                 android:src="@drawable/ic_eraser" />
 
             <ImageView
@@ -98,7 +98,7 @@
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
                 android:focusable="true"
-                android:padding="16dp"
+                android:padding="@dimen/normal_100"
                 android:src="@drawable/ic_download" />
 
         </LinearLayout>
@@ -111,7 +111,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544~3347511713"
+        ads:adUnitId="@string/ADMOB_KEY"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

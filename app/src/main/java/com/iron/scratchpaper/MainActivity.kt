@@ -10,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val scratchPaperViewModel: ScratchPaperViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var scratchPaperView: ScratchPaperView
+    lateinit var scratchPaperView: ScratchPaperView
 
     private lateinit var mediaScannerConnection: MediaScannerConnection
     private lateinit var mediaScannerConnectionClient: MediaScannerConnection.MediaScannerConnectionClient
@@ -153,11 +154,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setPenMode() {
         if(scratchPaperView.isEraserMode) {
-            binding.eraserImageView.setBackgroundColor(Color.parseColor("#EAEAEA"))
-            binding.penImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            binding.eraserImageView.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
+            binding.penImageView.setBackgroundColor(Color.WHITE)
         } else {
-            binding.eraserImageView.setBackgroundColor(Color.parseColor("#FFFFFF"))
-            binding.penImageView.setBackgroundColor(Color.parseColor("#EAEAEA"))
+            binding.eraserImageView.setBackgroundColor(Color.WHITE)
+            binding.penImageView.setBackgroundColor(ContextCompat.getColor(this, R.color.gray))
         }
     }
 
@@ -185,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setStatusBarColor(color: Int) {
+    fun setStatusBarColor(color: Int) {
         window.apply {
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -194,27 +195,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showScratchBottomSheetFragment(mode: Mode) {
+        scratchPaperViewModel.mode = mode
         scratchPaperViewModel.scratchPaperState = scratchPaperView.getCurrentScratchPaperState()
 
-        val dialog = ScratchBottomSheetDialogFragment(mode).apply {
-            setOnSelectListener { color, thickness ->
-                when(mode) {
-                    is Mode.Background -> {
-                        setStatusBarColor(color)
-                        scratchPaperView.setScratchPaperBackgroundColor(color)
-                    }
-
-                    is Mode.Pen -> {
-                        scratchPaperView.setPenColor(color)
-                        scratchPaperView.setPenThickness(mode, thickness)
-                    }
-
-                    is Mode.Eraser -> {
-                        scratchPaperView.setPenThickness(mode, thickness)
-                    }
-                }
-            }
-        }
+        val dialog = ScratchBottomSheetDialogFragment()
 
         dialog.show(supportFragmentManager, ScratchBottomSheetDialogFragment.TAG)
     }

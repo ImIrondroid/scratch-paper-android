@@ -9,5 +9,6 @@ import androidx.lifecycle.ViewModel
  */
 class ScratchPaperViewModel: ViewModel() {
 
+    lateinit var mode: Mode
     lateinit var scratchPaperState: ScratchPaperState
 }
