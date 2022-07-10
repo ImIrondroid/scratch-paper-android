@@ -51,6 +51,12 @@ class ColorPicker @JvmOverloads constructor(
         this.onColorChangeListener = onColorChangeListener
     }
 
+    fun setCenterPaint(color: Int) {
+        centerPaint.color = color
+
+        invalidate()
+    }
+
     override fun onDraw(canvas: Canvas) {
         val radius = CENTER_X - borderPaint.strokeWidth * 0.5f
         val rectF = RectF(-radius, -radius, radius, radius)

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.iron.scratchpaper.databinding.DialogBottomSheetScratchBinding
@@ -19,23 +20,17 @@ import com.iron.scratchpaper.databinding.DialogBottomSheetScratchBinding
  * @desc
  */
 class ScratchBottomSheetDialogFragment(
-    private val penState: PenState,
     private val mode: Mode
 ) : BottomSheetDialogFragment() {
+
+    private val scratchPaperViewModel: ScratchPaperViewModel by activityViewModels()
 
     private lateinit var binding: DialogBottomSheetScratchBinding
 
     private lateinit var onSelectListener: (Int, Float) -> Unit
-    private var color =
-        when(mode) {
-            is Mode.Pen -> penState.penColor
-            else -> Color.WHITE
-        }
-    private var thickness =
-        when(mode) {
-            is Mode.Pen -> penState.penThickness
-            else -> penState.eraserThickness
-        }
+    private var color = 0
+    private var thickness = 0f
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,40 +61,87 @@ class ScratchBottomSheetDialogFragment(
     }
 
     private fun initializeView() {
-        binding.colorPicker.setOnColorChangeListener {
-            color = it
+        when(mode) {
+            is Mode.Background -> {
+                binding.colorTitleTextView.text = "배경 색상"
+                binding.thicknessSelectTextView.visibility = View.GONE
+            }
+            is Mode.Eraser -> {
+                binding.thicknessTitleTextView.text = "지우개 두께"
+                binding.colorConstraintLayout.visibility = View.GONE
+            }
+            else -> {
+                binding.colorTitleTextView.text = "펜 색상"
+                binding.thicknessTitleTextView.text = "펜 두께"
+                binding.thicknessSelectTextView.visibility = View.GONE
+            }
         }
 
-        binding.selectTextView.setOnClickListener {
+        color =
+            when(mode) {
+                is Mode.Pen -> scratchPaperViewModel.scratchPaperState.penColor
+                is Mode.Eraser -> Color.WHITE
+                is Mode.Background -> scratchPaperViewModel.scratchPaperState.scratchPaperColor
+            }
+
+        thickness =
+            when(mode) {
+                is Mode.Pen -> scratchPaperViewModel.scratchPaperState.penThickness
+                is Mode.Eraser -> scratchPaperViewModel.scratchPaperState.eraserThickness
+                is Mode.Background -> 0f
+            }
+
+
+        binding.colorPicker.apply {
+            setOnColorChangeListener {
+                color = it
+            }
+            setCenterPaint(color)
+        }
+
+        binding.colorSelectTextView.setOnClickListener {
             when(mode) {
                 is Mode.Background -> onSelectListener.invoke(color, 0f)
                 is Mode.Pen -> onSelectListener.invoke(color, thickness)
-                is Mode.Eraser -> onSelectListener.invoke(color, thickness)
+                is Mode.Eraser -> onSelectListener.invoke(0, thickness)
+            }
+
+            dismiss()
+        }
+
+        binding.thicknessSelectTextView.setOnClickListener {
+            when(mode) {
+                is Mode.Background -> onSelectListener.invoke(color, 0f)
+                is Mode.Pen -> onSelectListener.invoke(color, thickness)
+                is Mode.Eraser -> onSelectListener.invoke(0, thickness)
             }
 
             dismiss()
         }
 
         when(mode) {
-            is Mode.Background -> binding.seekBarConstraintLayout.visibility = View.GONE
+            is Mode.Background -> binding.thicknessConstraintLayout.visibility = View.GONE
             else -> {
-                binding.seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
-                    override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                        thickness = p1.toFloat()
-                    }
-
-                    override fun onStartTrackingTouch(p0: SeekBar?) {
-                        p0?.run {
-                            thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_transparent)
+                binding.seekBar.apply {
+                    progress = thickness.toInt()
+                    setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                            thickness = p1.toFloat()
                         }
-                    }
 
-                    override fun onStopTrackingTouch(p0: SeekBar?) {
-                        p0?.run {
-                            thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_normal)
+                        override fun onStartTrackingTouch(p0: SeekBar?) {
+                            p0?.run {
+                                thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_transparent)
+                            }
                         }
-                    }
-                })
+
+                        override fun onStopTrackingTouch(p0: SeekBar?) {
+                            p0?.run {
+                                thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_normal)
+                            }
+                        }
+                    })
+                }
             }
         }
     }

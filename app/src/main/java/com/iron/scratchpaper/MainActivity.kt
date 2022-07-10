@@ -18,7 +18,7 @@ import com.iron.scratchpaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private val penViewModel: PenViewModel by viewModels()
+    private val scratchPaperViewModel: ScratchPaperViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var scratchPaperView: ScratchPaperView
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         scratchPaperView.apply {
             setOnPenChangeListener { setMoveMode() }
-            savePenState(penViewModel.penState)
+            saveScratchPaperState(scratchPaperViewModel.scratchPaperState)
         }
     }
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         scratchPaperView.apply {
             setOnPenChangeListener { setMoveMode() }
-            savePenState(penViewModel.penState)
+            saveScratchPaperState(scratchPaperViewModel.scratchPaperState)
             setPenMode()
         }
     }
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        penViewModel.penState = scratchPaperView.getCurrentPenState()
+        scratchPaperViewModel.scratchPaperState = scratchPaperView.getCurrentScratchPaperState()
     }
 
     private fun initializeView() {
@@ -194,16 +194,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showScratchBottomSheetFragment(mode: Mode) {
-        val penState = scratchPaperView.getCurrentPenState()
-        val dialog = ScratchBottomSheetDialogFragment(penState, mode).apply {
+        scratchPaperViewModel.scratchPaperState = scratchPaperView.getCurrentScratchPaperState()
+
+        val dialog = ScratchBottomSheetDialogFragment(mode).apply {
             setOnSelectListener { color, thickness ->
                 when(mode) {
                     is Mode.Background -> {
                         setStatusBarColor(color)
                         scratchPaperView.setScratchPaperBackgroundColor(color)
                     }
-                    is Mode.Pen, is Mode.Eraser-> {
+
+                    is Mode.Pen -> {
                         scratchPaperView.setPenColor(color)
+                        scratchPaperView.setPenThickness(mode, thickness)
+                    }
+
+                    is Mode.Eraser -> {
                         scratchPaperView.setPenThickness(mode, thickness)
                     }
                 }

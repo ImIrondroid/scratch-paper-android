@@ -152,8 +152,8 @@ class ScratchPaperView : View {
         this.onPenChangeListener = onPenChangeListener
     }
 
-    fun getCurrentPenState() =
-        PenState(
+    fun getCurrentScratchPaperState() =
+        ScratchPaperState(
             penList,
             penIndex,
             penColor,
@@ -165,7 +165,7 @@ class ScratchPaperView : View {
             scratchPaperColor,
         )
 
-    fun savePenState(penState: PenState) {
+    fun saveScratchPaperState(penState: ScratchPaperState) {
         penList.addAll(penState.penList)
         penIndex = penState.penIndex
         penColor = penState.penColor
