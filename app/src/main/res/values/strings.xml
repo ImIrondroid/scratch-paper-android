@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">scratch-paper-android</string>
+    <string name="scratchPaperColor">배경 색상</string>
+    <string name="penColor">펜 색상</string>
+    <string name="penThickness">펜 두께</string>
+    <string name="eraserThickness">지우개 두께</string>
 </resources>

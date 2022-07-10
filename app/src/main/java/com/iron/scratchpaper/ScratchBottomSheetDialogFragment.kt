@@ -44,7 +44,8 @@ class ScratchBottomSheetDialogFragment(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState)
         bottomSheetDialog.setOnShowListener {
-            val bottomSheet = bottomSheetDialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+            val bottomSheet =
+                bottomSheetDialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
 
             if (bottomSheet != null) {
                 val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from(bottomSheet)
@@ -61,31 +62,31 @@ class ScratchBottomSheetDialogFragment(
     }
 
     private fun initializeView() {
-        when(mode) {
+        when (mode) {
             is Mode.Background -> {
-                binding.colorTitleTextView.text = "배경 색상"
+                binding.colorTitleTextView.text = getString(R.string.scratchPaperColor)
                 binding.thicknessSelectTextView.visibility = View.GONE
             }
             is Mode.Eraser -> {
-                binding.thicknessTitleTextView.text = "지우개 두께"
+                binding.thicknessTitleTextView.text = getString(R.string.eraserThickness)
                 binding.colorConstraintLayout.visibility = View.GONE
             }
             else -> {
-                binding.colorTitleTextView.text = "펜 색상"
-                binding.thicknessTitleTextView.text = "펜 두께"
+                binding.colorTitleTextView.text = getString(R.string.penColor)
+                binding.thicknessTitleTextView.text = getString(R.string.penThickness)
                 binding.thicknessSelectTextView.visibility = View.GONE
             }
         }
 
         color =
-            when(mode) {
+            when (mode) {
                 is Mode.Pen -> scratchPaperViewModel.scratchPaperState.penColor
                 is Mode.Eraser -> Color.WHITE
                 is Mode.Background -> scratchPaperViewModel.scratchPaperState.scratchPaperColor
             }
 
         thickness =
-            when(mode) {
+            when (mode) {
                 is Mode.Pen -> scratchPaperViewModel.scratchPaperState.penThickness
                 is Mode.Eraser -> scratchPaperViewModel.scratchPaperState.eraserThickness
                 is Mode.Background -> 0f
@@ -100,7 +101,7 @@ class ScratchBottomSheetDialogFragment(
         }
 
         binding.colorSelectTextView.setOnClickListener {
-            when(mode) {
+            when (mode) {
                 is Mode.Background -> onSelectListener.invoke(color, 0f)
                 is Mode.Pen -> onSelectListener.invoke(color, thickness)
                 is Mode.Eraser -> onSelectListener.invoke(0, thickness)
@@ -110,7 +111,7 @@ class ScratchBottomSheetDialogFragment(
         }
 
         binding.thicknessSelectTextView.setOnClickListener {
-            when(mode) {
+            when (mode) {
                 is Mode.Background -> onSelectListener.invoke(color, 0f)
                 is Mode.Pen -> onSelectListener.invoke(color, thickness)
                 is Mode.Eraser -> onSelectListener.invoke(0, thickness)
@@ -119,25 +120,31 @@ class ScratchBottomSheetDialogFragment(
             dismiss()
         }
 
-        when(mode) {
+        when (mode) {
             is Mode.Background -> binding.thicknessConstraintLayout.visibility = View.GONE
             else -> {
                 binding.seekBar.apply {
                     progress = thickness.toInt()
-                    setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+                    setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                         override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                             thickness = p1.toFloat()
                         }
 
                         override fun onStartTrackingTouch(p0: SeekBar?) {
                             p0?.run {
-                                thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_transparent)
+                                thumb = ContextCompat.getDrawable(
+                                    requireContext(),
+                                    R.drawable.progressbar_thumb_transparent
+                                )
                             }
                         }
 
                         override fun onStopTrackingTouch(p0: SeekBar?) {
                             p0?.run {
-                                thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_normal)
+                                thumb = ContextCompat.getDrawable(
+                                    requireContext(),
+                                    R.drawable.progressbar_thumb_normal
+                                )
                             }
                         }
                     })
