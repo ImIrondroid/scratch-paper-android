@@ -52,7 +52,7 @@ class ScratchPaperDialog(
     private fun initializeAds() {
         MobileAds.initialize(context)
 
-        val adLoader: AdLoader = AdLoader.Builder(context, "ca-app-pub-3940256099942544/2247696110")
+        val adLoader: AdLoader = AdLoader.Builder(context, context.getString(R.string.ADMOB_NATIVE_KEY))
             .forNativeAd { nativeAd ->
                 val template: TemplateView = dialog.findViewById(R.id.nativeTemplates)
                 template.setNativeAd(nativeAd)

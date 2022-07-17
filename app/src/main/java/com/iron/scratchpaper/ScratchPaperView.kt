@@ -16,7 +16,7 @@ import kotlin.math.sqrt
 /**
  * @author 최철훈
  * @created 2022-06-19
- * @desc
+ * @desc 배경, 펜, 지우개를 표현하는 커스텀 뷰
  */
 class ScratchPaperView : View {
 

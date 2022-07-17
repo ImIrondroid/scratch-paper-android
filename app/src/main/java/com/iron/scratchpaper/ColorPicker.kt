@@ -11,7 +11,7 @@ import kotlin.math.roundToInt
 /**
  * @author 최철훈
  * @created 2022-06-21
- * @desc
+ * @desc ScratchPaperView 배경과 펜 색상 설정을 위해 사용
  */
 class ColorPicker @JvmOverloads constructor(
     context: Context,

@@ -17,7 +17,7 @@ import com.iron.scratchpaper.databinding.DialogBottomSheetScratchBinding
 /**
  * @author 최철훈
  * @created 2022-06-23
- * @desc
+ * @desc 배경, 펜, 지우개의 색상 및 두께 설정을 위해 사용
  */
 class ScratchBottomSheetDialogFragment: BottomSheetDialogFragment() {
 
