@@ -25,10 +25,9 @@ class ScratchBottomSheetDialogFragment: BottomSheetDialogFragment() {
 
     private lateinit var binding: DialogBottomSheetScratchBinding
 
-    private lateinit var setOnConfirmListener: (Int, Float) -> Unit
+    private lateinit var mode: Mode
     private var color = 0
     private var thickness = 0f
-    private lateinit var mode: Mode
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -157,19 +156,13 @@ class ScratchBottomSheetDialogFragment: BottomSheetDialogFragment() {
 
                         override fun onStartTrackingTouch(p0: SeekBar?) {
                             p0?.run {
-                                thumb = ContextCompat.getDrawable(
-                                    requireContext(),
-                                    R.drawable.progressbar_thumb_transparent
-                                )
+                                thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_transparent)
                             }
                         }
 
                         override fun onStopTrackingTouch(p0: SeekBar?) {
                             p0?.run {
-                                thumb = ContextCompat.getDrawable(
-                                    requireContext(),
-                                    R.drawable.progressbar_thumb_normal
-                                )
+                                thumb = ContextCompat.getDrawable(requireContext(), R.drawable.progressbar_thumb_normal)
                             }
                         }
                     })

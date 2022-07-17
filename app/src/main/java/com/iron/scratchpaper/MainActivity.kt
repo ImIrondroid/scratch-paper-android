@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaScannerConnection: MediaScannerConnection
     private lateinit var mediaScannerConnectionClient: MediaScannerConnection.MediaScannerConnectionClient
+    private var scratchPaperDialog: ScratchPaperDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,10 @@ class MainActivity : AppCompatActivity() {
             setOnPenChangeListener { setMoveMode() }
             saveScratchPaperState(scratchPaperViewModel.scratchPaperState)
         }
+    }
+
+    override fun onBackPressed() {
+        showFinishDialog()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -199,7 +204,23 @@ class MainActivity : AppCompatActivity() {
         scratchPaperViewModel.scratchPaperState = scratchPaperView.getCurrentScratchPaperState()
 
         val dialog = ScratchBottomSheetDialogFragment()
-
         dialog.show(supportFragmentManager, ScratchBottomSheetDialogFragment.TAG)
+    }
+
+    private fun showFinishDialog() {
+        if(scratchPaperDialog == null) {
+            scratchPaperDialog = ScratchPaperDialog(
+                context = this,
+                onConfirm = { finish() }
+            )
+            scratchPaperDialog?.show()
+        } else {
+            scratchPaperDialog?.run {
+                if(isShowing())
+                    dismiss()
+                else
+                    show()
+            }
+        }
     }
 }
