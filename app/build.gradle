@@ -22,10 +22,12 @@ android {
     buildTypes {
         debug {
             resValue "string", "ADMOB_KEY", properties.getProperty('ADMOB_SAMPLE_KEY')
+            resValue "string", "ADMOB_NATIVE_KEY", properties.getProperty('ADMOB_NATIVE_SAMPLE_KEY')
         }
 
         release {
             resValue "string", "ADMOB_KEY", properties.getProperty('ADMOB_RELEASE_KEY')
+            resValue "string", "ADMOB_NATIVE_KEY", properties.getProperty('ADMOB_NATIVE_RELEASE_KEY')
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
