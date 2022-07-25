@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simple Paint</string>
+    <string name="scratchPaperColor">Background Color</string>
+    <string name="penColor">Pen Color</string>
+    <string name="penThickness">Pen Thickness</string>
+    <string name="eraserThickness">Eraser Thickness</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="save_image_success">Image has been saved.</string>
+    <string name="save_image_failed">Image failed to save.</string>
+    <string name="message">Please watch the ad once before closing the app.\nThank you again for using it.</string>
+</resources>
